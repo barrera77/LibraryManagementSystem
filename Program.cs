@@ -17,8 +17,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-//BOOK 
-
+//Book
 app.MapGet("/api/books", () =>
 {
     return Results.Ok(new { message = "Retrieved all books" });
@@ -45,7 +44,6 @@ app.MapDelete("/api/books/{id}", (Guid id) =>
 }).WithTags("Books");
 
 //Reader
-
 app.MapGet("/api/readers", () =>
 {
     return Results.Ok(new { message = "Retrieved all readers" });
