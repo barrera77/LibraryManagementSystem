@@ -1,50 +1,103 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using LibraryManagementSystem.Models;
+using LibraryManagementSystem.Repositories;
 
 namespace LibraryManagementSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BookController : ControllerBase
+    public class BookController : Controller
     {       
-        [HttpGet]
-        public IActionResult GetAllBooks()
-        {
-            return Ok(new { message = "Retrieved all books successfully" });
-        }
-       
-        [HttpGet("{id}")]
-        public IActionResult GetBookById(int id)
-        {
-            return Ok(new { message = $"Retrieved book with ID: {id}" });
-        }
-     
-        [HttpPost]
-        public IActionResult CreateBook([FromBody] Book book)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
 
-            return Ok(new { message = "Book created successfully", data = book });
-        }
-       
-        [HttpPut("{id}")]
-        public IActionResult UpdateBook(int id, [FromBody] Book book)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        private readonly BookRepository _bookRepository;
 
-            return Ok(new { message = $"Book with ID {id} updated successfully", data = book });
+        public BookController(BookRepository bookRepository)
+        {
+            _bookRepository = bookRepository;
+        }
+
+        //Get all
+        public IActionResult Index()
+        {
+            var books = _bookRepository.GetAll();
+            return View(books);
+        }
+
+        //Details
+        public IActionResult Details(int id)
+        {
+            var book = _bookRepository.GetById(id);
+            if (book == null)
+            {
+                return NotFound();
+            }
+            return View(book);
+
+        }
+
+        //Create
+        public IActionResult CreateBook()
+        {
+            return View();
         }
         
-        [HttpDelete("{id}")]
+        [HttpPost]
+        public IActionResult CreateBook(Book book)
+        {
+            if (ModelState.IsValid)
+            {
+                _bookRepository.Add(book);
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(book);
+        }
+
+        //Update
+        public IActionResult UpdateBook(int id)
+        {
+            var book = _bookRepository.GetById(id);
+            if (book == null)
+            {
+                return NotFound();                
+            }
+            return View(book);
+        }
+
+        [HttpPost]
+        public IActionResult UpdateBook(int id, Book book)
+        {
+            if (id != book.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                _bookRepository.Update(book);
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(book);
+        }
+
+        //Delete
+        public IActionResult Delete(int id)
+        {
+            var book = _bookRepository.GetById(id);
+            if (book == null)
+            {
+                return NotFound();
+            }
+            return View(book);
+        }
+
+
+        [HttpPost, ActionName("Delete")]
         public IActionResult DeleteBook(int id)
         {
-            return Ok(new { message = $"Book with ID {id} deleted successfully" });
+            _bookRepository.Delete(id);
+            return RedirectToAction(nameof(Index));
         }
     }
 }

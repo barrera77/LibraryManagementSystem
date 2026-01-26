@@ -1,50 +1,79 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using LibraryManagementSystem.Models;
+using LibraryManagementSystem.Repositories;
 
 namespace LibraryManagementSystem.Controllers
-{
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ReaderController : ControllerBase
+{   
+    public class ReaderController : Controller
     {
-        [HttpGet]
-        public IActionResult GetAllReaders()
+        private readonly IReaderRepository _readerRepository;
+
+        public ReaderController(IReaderRepository readerRepository)
         {
-            return Ok(new { message = "Retrieved all readers successfully" });
+            _readerRepository = readerRepository;
         }
 
-        [HttpGet("{id}")]
-        public IActionResult GetReaderById(int id)
+        //Get all
+        public IActionResult Index()
         {
-            return Ok(new { message = $"Retrieved reader with ID: {id}" });
+            var readers = _readerRepository.GetAll();
+            return View(readers);        
+        }
+
+       public IActionResult Details(int id)
+        {
+            var reader = _readerRepository.GetById(id);
+            if (reader == null)
+            {
+                return NotFound();
+            }
+            return View(reader);   
+        }
+       
+        //Create
+        public IActionResult Create()
+        {
+            return View();
         }
 
         [HttpPost]
-        public IActionResult CreateReader([FromBody] Reader reader)
+        public IActionResult Create(Reader reader)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                _readerRepository.Add(reader);
+                return RedirectToAction(nameof(Index));
             }
-
-            return Ok(new { message = "Reader created successfully", data = reader });
+            return View(reader);
         }
 
-        [HttpPut("{id}")]
-        public IActionResult UpdateReader(int id, [FromBody] Reader reader)
+        //Update
+        public IActionResult Update(int id)
         {
-            if (!ModelState.IsValid)
+            var reader = _readerRepository.GetById(id);
+            if (reader == null)
             {
-                return BadRequest(ModelState);
+                return NotFound();
             }
-
-            return Ok(new { message = $"Reader with ID {id} updated successfully", data = reader });
+            return View(reader);
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult DeleteReader(int id)
+        //Delete
+        public IActionResult Delete(int id)
         {
-            return Ok(new { message = $"Reader with ID {id} deleted successfully" });
+            var reader = _readerRepository.GetById(id);
+            if (reader == null)
+            {
+                return NotFound();
+            }
+            return View(reader);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            _readerRepository.Delete(id);
+            return RedirectToAction(nameof(Index));
         }
     }
 }
