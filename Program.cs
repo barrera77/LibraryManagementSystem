@@ -1,25 +1,31 @@
-using System.ComponentModel.DataAnnotations;
+using LibraryManagementSystem.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//Controllers services
-builder.Services.AddControllers();
+builder.Services.AddControllersWithViews();
 
-//Swagger services
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSingleton<IBookRepository, BookRepository>();
+builder.Services.AddSingleton<IReaderRepository, ReaderRepository>();
+builder.Services.AddSingleton<IBorrowingRepository, BorrowingRepository>();
 
 var app = builder.Build();
 
-// Enable Swagger
-if (app.Environment.IsDevelopment())
+if (!app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 
-app.MapControllers();
+app.UseRouting();
+
+app.UseAuthorization();
+
+// Default MVC route
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

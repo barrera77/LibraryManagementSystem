@@ -4,14 +4,12 @@ using LibraryManagementSystem.Repositories;
 
 namespace LibraryManagementSystem.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
     public class BookController : Controller
     {       
 
-        private readonly BookRepository _bookRepository;
+        private readonly IBookRepository _bookRepository;
 
-        public BookController(BookRepository bookRepository)
+        public BookController(IBookRepository bookRepository)
         {
             _bookRepository = bookRepository;
         }
@@ -36,13 +34,13 @@ namespace LibraryManagementSystem.Controllers
         }
 
         //Create
-        public IActionResult CreateBook()
+        public IActionResult Create()
         {
             return View();
         }
         
         [HttpPost]
-        public IActionResult CreateBook(Book book)
+        public IActionResult Create(Book book)
         {
             if (ModelState.IsValid)
             {
@@ -54,7 +52,7 @@ namespace LibraryManagementSystem.Controllers
         }
 
         //Update
-        public IActionResult UpdateBook(int id)
+        public IActionResult Update(int id)
         {
             var book = _bookRepository.GetById(id);
             if (book == null)
@@ -65,7 +63,7 @@ namespace LibraryManagementSystem.Controllers
         }
 
         [HttpPost]
-        public IActionResult UpdateBook(int id, Book book)
+        public IActionResult Update(int id, Book book)
         {
             if (id != book.Id)
             {
@@ -94,7 +92,7 @@ namespace LibraryManagementSystem.Controllers
 
 
         [HttpPost, ActionName("Delete")]
-        public IActionResult DeleteBook(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
             _bookRepository.Delete(id);
             return RedirectToAction(nameof(Index));

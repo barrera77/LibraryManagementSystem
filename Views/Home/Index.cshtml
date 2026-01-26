@@ -1,0 +1,75 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h1>Library Management System - Dashboard</h1>
+
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Total Books</h5>
+                <p class="card-text display-4">@ViewBag.TotalBooks</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Total Readers</h5>
+                <p class="card-text display-4">@ViewBag.TotalReaders</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-warning mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Active Borrowings</h5>
+                <p class="card-text display-4">@ViewBag.ActiveBorrowings</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-info mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Available Books</h5>
+                <p class="card-text display-4">@ViewBag.AvailableBooks</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Manage Books</h5>
+                <p class="card-text">Add, edit, or delete books from the library.</p>
+                <a asp-controller="Book" asp-action="Index" class="btn btn-primary">Go to Books</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Manage Readers</h5>
+                <p class="card-text">Register and manage library members.</p>
+                <a asp-controller="Reader" asp-action="Index" class="btn btn-success">Go to Readers</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Manage Borrowings</h5>
+                <p class="card-text">Track book loans and returns.</p>
+                <a asp-controller="Borrowing" asp-action="Index" class="btn btn-warning">Go to Borrowings</a>
+            </div>
+        </div>
+    </div>
+</div>
