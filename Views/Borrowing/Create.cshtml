@@ -1,0 +1,51 @@
+﻿@model Borrowing
+
+@{
+    ViewData["Title"] = "Create Borrowing";
+}
+
+<h2>Create New Borrowing</h2>
+
+<form asp-action="Create" method="post">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group mb-3">
+                <label asp-for="BookId" class="form-label">Select Book</label>
+                <select asp-for="BookId" class="form-control" asp-items="ViewBag.Books">
+                    <option value="">-- Select a Book --</option>
+                </select>
+                <span asp-validation-for="BookId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="ReaderId" class="form-label">Select Reader</label>
+                <select asp-for="ReaderId" class="form-control" asp-items="ViewBag.Readers">
+                    <option value="">-- Select a Reader --</option>
+                </select>
+                <span asp-validation-for="ReaderId" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="alert alert-info">
+                <h5>Borrowing Information</h5>
+                <ul>
+                    <li>Borrow date will be set automatically</li>
+                    <li>Only available books can be borrowed</li>
+                    <li>Only active readers can borrow books</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group mt-3">
+        <button type="submit" class="btn btn-success">Create Borrowing</button>
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    </div>
+</form>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.12/dist/jquery.validate.unobtrusive.min.js"></script>
+}

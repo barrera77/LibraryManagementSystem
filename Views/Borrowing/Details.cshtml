@@ -1,0 +1,65 @@
+﻿@model Borrowing
+
+@{
+    ViewData["Title"] = "Borrowing Details";
+}
+
+<h2>Borrowing Details</h2>
+
+<div class="card">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">Book</dt>
+            <dd class="col-sm-9">@ViewBag.BookTitle</dd>
+
+            <dt class="col-sm-3">Reader</dt>
+            <dd class="col-sm-9">@ViewBag.ReaderName</dd>
+
+            <dt class="col-sm-3">Borrow Date</dt>
+            <dd class="col-sm-9">@Model.BorrowDate.ToString("yyyy-MM-dd HH:mm")</dd>
+
+            <dt class="col-sm-3">Return Date</dt>
+            <dd class="col-sm-9">
+                @if (Model.ReturnDate.HasValue)
+                {
+                    @Model.ReturnDate.Value.ToString("yyyy-MM-dd HH:mm")
+                }
+                else
+                {
+                    <span class="text-muted">Not Returned Yet</span>
+                }
+            </dd>
+
+            <dt class="col-sm-3">Status</dt>
+            <dd class="col-sm-9">
+                @if (Model.Status == "Active")
+                {
+                    <span class="badge bg-warning">Active</span>
+                }
+                else if (Model.Status == "Returned")
+                {
+                    <span class="badge bg-success">Returned</span>
+                }
+                else if (Model.Status == "Overdue")
+                {
+                    <span class="badge bg-danger">Overdue</span>
+                }
+            </dd>
+
+            <dt class="col-sm-3">Overdue Days</dt>
+            <dd class="col-sm-9">@Model.OverdueDays</dd>
+        </dl>
+    </div>
+</div>
+
+<div class="mt-3">
+    @if (Model.Status == "Active")
+    {
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+        <form asp-action="Return" asp-route-id="@Model.Id" method="post" style="display:inline;">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-success">Return Book</button>
+        </form>
+    }
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>

@@ -1,0 +1,75 @@
+﻿@model IEnumerable<Borrowing>
+
+@{
+    ViewData["Title"] = "Borrowings";
+}
+
+<h2>Borrowings</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New Borrowing</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Book</th>
+            <th>Reader</th>
+            <th>Borrow Date</th>
+            <th>Return Date</th>
+            <th>Status</th>
+            <th>Overdue Days</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            var bookTitle = ViewBag.Books.ContainsKey(item.BookId) ? ViewBag.Books[item.BookId] : "Unknown";
+            var readerName = ViewBag.Readers.ContainsKey(item.ReaderId) ? ViewBag.Readers[item.ReaderId] : "Unknown";
+
+            <tr>
+                <td>@bookTitle</td>
+                <td>@readerName</td>
+                <td>@item.BorrowDate.ToString("yyyy-MM-dd HH:mm")</td>
+                <td>
+                    @if (item.ReturnDate.HasValue)
+                    {
+                        @item.ReturnDate.Value.ToString("yyyy-MM-dd HH:mm")
+                    }
+                    else
+                    {
+                        <span class="text-muted">Not Returned</span>
+                    }
+                </td>
+                <td>
+                    @if (item.Status == "Active")
+                    {
+                        <span class="badge bg-warning">Active</span>
+                    }
+                    else if (item.Status == "Returned")
+                    {
+                        <span class="badge bg-success">Returned</span>
+                    }
+                    else if (item.Status == "Overdue")
+                    {
+                        <span class="badge bg-danger">Overdue</span>
+                    }
+                </td>
+                <td>@item.OverdueDays</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
+                    @if (item.Status == "Active")
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
+                        <form asp-action="Return" asp-route-id="@item.Id" method="post" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-success">Return</button>
+                        </form>
+                    }
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

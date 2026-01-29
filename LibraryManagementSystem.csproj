@@ -12,9 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\Borrowing\" />
     <Folder Include="Views\Auth\" />
-    <Folder Include="Views\Reader\" />
   </ItemGroup>
 
 </Project>
