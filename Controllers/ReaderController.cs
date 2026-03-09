@@ -74,6 +74,24 @@ namespace LibraryManagementSystem.Controllers
             return View(reader);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Update(int id, Reader reader)
+        {
+            if (id != reader.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                _readerRepository.Update(reader);
+                return RedirectToAction(nameof(Index));
+            }
+            return View(reader);
+        }
+
+
         //Delete
         public IActionResult Delete(int id)
         {
