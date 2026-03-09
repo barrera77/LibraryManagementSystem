@@ -17,10 +17,26 @@ namespace LibraryManagementSystem.Controllers
             _borrowingRepository = borrowingRepository;
             _readerRepository = readerRepository;
         }
-        
+
+        private bool IsAuthenticated()
+        {
+            var staffId = HttpContext.Session.GetString("StaffId");
+            if (string.IsNullOrEmpty(staffId))
+            {
+                return false;
+            }
+            return true;
+        }
+
+
         //Get all
         public IActionResult Index()
         {
+            if (!IsAuthenticated())
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
             var borrowings = _borrowingRepository.GetAll();
             var books = _bookRepository.GetAll();
             var readers = _readerRepository.GetAll();

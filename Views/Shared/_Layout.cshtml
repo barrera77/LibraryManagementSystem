@@ -29,11 +29,38 @@
                             <a class="nav-link" asp-controller="Borrowing" asp-action="Index">Borrowings</a>
                         </li>
                     </ul>
+                    <ul class="navbar-nav ms-auto">
+                        @if (Context.Session.GetString("StaffName") != null)
+                        {
+                            <li class="nav-item">
+                                <span class="nav-link text-white">Welcome, @Context.Session.GetString("StaffName")</span>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Auth" asp-action="Logout">Logout</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Auth" asp-action="Login">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Auth" asp-action="Register">Register</a>
+                            </li>
+                        }
+                    </ul>
                 </div>
             </div>
         </nav>
     </header>
     <div class="container mt-4">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
         <main role="main" class="pb-3">
             @RenderBody()
         </main>

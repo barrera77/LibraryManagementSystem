@@ -18,9 +18,26 @@ namespace LibraryManagementSystem.Controllers
             _borrowingRepository = borrowingRepository;
         }
 
+        private bool IsAuthenticated()
+        {
+            var staffId = HttpContext.Session.GetString("StaffId");
+            if (string.IsNullOrEmpty(staffId))
+            {
+                return false;
+            }
+            return true;
+        }
+
+
         //Home/Index 
         public IActionResult Index()
         {
+            if (!IsAuthenticated())
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
+
             ViewBag.TotalBooks = _bookRepository.GetAll().Count;
             ViewBag.TotalReaders = _readerRepository.GetAll().Count;
             ViewBag.ActiveBorrowings = _borrowingRepository.GetAll().Count(b => b.Status == "Active");

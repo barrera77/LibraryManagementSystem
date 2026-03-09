@@ -13,9 +13,25 @@ namespace LibraryManagementSystem.Controllers
             _readerRepository = readerRepository;
         }
 
+        private bool IsAuthenticated()
+        {
+            var staffId = HttpContext.Session.GetString("StaffId");
+            if (string.IsNullOrEmpty(staffId))
+            {
+                return false;
+            }
+            return true;
+        }
+
+
         //Get all
         public IActionResult Index()
         {
+            if (!IsAuthenticated())
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
             var readers = _readerRepository.GetAll();
             return View(readers);        
         }
