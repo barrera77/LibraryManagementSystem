@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Session support
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
@@ -19,7 +18,6 @@ builder.Services.AddDbContext<LibraryContext>(options =>
         builder.Configuration.GetConnectionString("DefaultConnection")
     ));
 
-// repositories must be SCOPED
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IReaderRepository, ReaderRepository>();
 builder.Services.AddScoped<IBorrowingRepository, BorrowingRepository>();
@@ -41,7 +39,6 @@ app.UseRouting();
 app.UseSession();
 app.UseAuthorization();
 
-// Default MVC route
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Auth}/{action=Login}/{id?}");
