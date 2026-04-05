@@ -1,33 +1,40 @@
 ﻿using LibraryManagementSystem.Models;
+using LibraryManagementSystem.Data;
 
 namespace LibraryManagementSystem.Repositories
 {
     public class BorrowingRepository : IBorrowingRepository
     {
-        private static List<Borrowing> _borrowings = new List<Borrowing>();
-        private static int _nextId = 1;
+        private readonly LibraryContext _context;
+
+        public BorrowingRepository(LibraryContext context)
+        {
+            _context = context;
+        }
 
         public List<Borrowing> GetAll()
         {
-            return _borrowings;
+            return _context.Borrowings.ToList();
         }
 
         public Borrowing? GetById(int id)
         {
-            return _borrowings.FirstOrDefault(b => b.Id == id);
+            return _context.Borrowings.FirstOrDefault(b => b.Id == id);
         }
 
         public void Add(Borrowing borrowing)
         {
-            borrowing.Id = _nextId++;
             borrowing.BorrowDate = DateTime.UtcNow;
             borrowing.Status = "Active";
-            _borrowings.Add(borrowing);
+
+            _context.Borrowings.Add(borrowing);
+            _context.SaveChanges();
         }
 
         public void Update(Borrowing borrowing)
         {
             var existingBorrowing = GetById(borrowing.Id);
+
             if (existingBorrowing != null)
             {
                 existingBorrowing.BookId = borrowing.BookId;
@@ -35,15 +42,19 @@ namespace LibraryManagementSystem.Repositories
                 existingBorrowing.ReturnDate = borrowing.ReturnDate;
                 existingBorrowing.Status = borrowing.Status;
                 existingBorrowing.OverdueDays = borrowing.OverdueDays;
+
+                _context.SaveChanges();
             }
         }
 
         public void Delete(int id)
         {
             var borrowing = GetById(id);
+
             if (borrowing != null)
             {
-                _borrowings.Remove(borrowing);
+                _context.Borrowings.Remove(borrowing);
+                _context.SaveChanges();
             }
         }
     }

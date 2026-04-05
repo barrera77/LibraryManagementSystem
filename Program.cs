@@ -1,8 +1,10 @@
+using LibraryManagementSystem.Data;
 using LibraryManagementSystem.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//Session support
+// Session support
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
@@ -12,10 +14,16 @@ builder.Services.AddSession(options =>
 
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddSingleton<IBookRepository, BookRepository>();
-builder.Services.AddSingleton<IReaderRepository, ReaderRepository>();
-builder.Services.AddSingleton<IBorrowingRepository, BorrowingRepository>();
-builder.Services.AddSingleton<IStaffRepository, StaffRepository>();
+builder.Services.AddDbContext<LibraryContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection")
+    ));
+
+// repositories must be SCOPED
+builder.Services.AddScoped<IBookRepository, BookRepository>();
+builder.Services.AddScoped<IReaderRepository, ReaderRepository>();
+builder.Services.AddScoped<IBorrowingRepository, BorrowingRepository>();
+builder.Services.AddScoped<IStaffRepository, StaffRepository>();
 
 var app = builder.Build();
 
@@ -33,7 +41,7 @@ app.UseRouting();
 app.UseSession();
 app.UseAuthorization();
 
-//Default MVC route
+// Default MVC route
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Auth}/{action=Login}/{id?}");

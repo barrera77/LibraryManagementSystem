@@ -1,31 +1,37 @@
 ﻿using LibraryManagementSystem.Models;
+using LibraryManagementSystem.Data;
 
 namespace LibraryManagementSystem.Repositories
 {
     public class ReaderRepository : IReaderRepository
     {
-        private static List<Reader> _readers = new List<Reader>();
-        private static int _nextId = 1;
+        private readonly LibraryContext _context;
+
+        public ReaderRepository(LibraryContext context)
+        {
+            _context = context;
+        }
 
         public List<Reader> GetAll()
         {
-            return _readers;
+            return _context.Readers.ToList();
         }
 
         public Reader? GetById(int id)
         {
-            return _readers.FirstOrDefault(r => r.Id == id);
+            return _context.Readers.FirstOrDefault(r => r.Id == id);
         }
 
         public void Add(Reader reader)
         {
-            reader.Id = _nextId++;
-            _readers.Add(reader);
+            _context.Readers.Add(reader);
+            _context.SaveChanges();
         }
 
         public void Update(Reader reader)
         {
-            var existingReader = GetById(reader.Id);
+            var existingReader = _context.Readers.FirstOrDefault(r => r.Id == reader.Id);
+
             if (existingReader != null)
             {
                 existingReader.FirstName = reader.FirstName;
@@ -33,15 +39,19 @@ namespace LibraryManagementSystem.Repositories
                 existingReader.Email = reader.Email;
                 existingReader.PhoneNumber = reader.PhoneNumber;
                 existingReader.Address = reader.Address;
+
+                _context.SaveChanges();
             }
         }
 
         public void Delete(int id)
         {
-            var reader = GetById(id);
+            var reader = _context.Readers.FirstOrDefault(r => r.Id == id);
+
             if (reader != null)
             {
-                _readers.Remove(reader);
+                _context.Readers.Remove(reader);
+                _context.SaveChanges();
             }
         }
     }

@@ -1,22 +1,28 @@
 ﻿using LibraryManagementSystem.Models;
+using LibraryManagementSystem.Data;
 
 namespace LibraryManagementSystem.Repositories
 {
     public class StaffRepository : IStaffRepository
     {
-        private static List<Staff> _staff = new List<Staff>();
-        private static int _nextId = 1;
+        private readonly LibraryContext _context;
+
+        public StaffRepository(LibraryContext context)
+        {
+            _context = context;
+        }
 
         public Staff? GetByEmail(string email)
         {
-            return _staff.FirstOrDefault(s => s.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+            return _context.Staff
+                .FirstOrDefault(s => s.Email.ToLower() == email.ToLower());
         }
 
         public void Add(Staff staff)
         {
-            staff.Id = _nextId++;
             staff.Email = staff.Email.ToLower();
-            _staff.Add(staff);
+            _context.Staff.Add(staff);
+            _context.SaveChanges();
         }
     }
 }

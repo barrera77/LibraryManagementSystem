@@ -1,28 +1,35 @@
 ﻿using LibraryManagementSystem.Models;
+using LibraryManagementSystem.Data;
 
 namespace LibraryManagementSystem.Repositories
 {
     public class BookRepository : IBookRepository
     {
-        private static List<Book> _books = new List<Book>();
-        private static int _nextId = 1;
+        private readonly LibraryContext _context;
+
+        public BookRepository(LibraryContext context)
+        {
+            _context = context;
+        }
 
         public List<Book> GetAll()
         {
-            return _books;
+            return _context.Books.ToList();
         }
 
         public Book? GetById(int id)
         {
-            return _books.FirstOrDefault(b => b.Id == id);
+            return _context.Books.Find(id);
         }
 
         public void Add(Book book)
         {
-            book.Id = _nextId++;
+            // Your business logic
             book.AvailableCopies = book.TotalCopies;
             book.IsAvailable = book.AvailableCopies > 0;
-            _books.Add(book);
+
+            _context.Books.Add(book);
+            _context.SaveChanges();
         }
 
         public void Update(Book book)
@@ -30,6 +37,7 @@ namespace LibraryManagementSystem.Repositories
             var existingBook = GetById(book.Id);
             if (existingBook != null)
             {
+                // Your business logic - update fields
                 existingBook.Title = book.Title;
                 existingBook.Author = book.Author;
                 existingBook.ISBN = book.ISBN;
@@ -39,6 +47,8 @@ namespace LibraryManagementSystem.Repositories
                 existingBook.TotalCopies = book.TotalCopies;
                 existingBook.AvailableCopies = book.AvailableCopies;
                 existingBook.IsAvailable = book.AvailableCopies > 0;
+
+                _context.SaveChanges();
             }
         }
 
@@ -47,7 +57,8 @@ namespace LibraryManagementSystem.Repositories
             var book = GetById(id);
             if (book != null)
             {
-                _books.Remove(book);
+                _context.Books.Remove(book);
+                _context.SaveChanges();
             }
         }
     }
